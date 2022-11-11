@@ -13,7 +13,7 @@ df = pd.read_csv("malaria.csv")
 print(df)
 
 #ploting the bar graph
-plt.bar(df.Continent,df.FactValueNumeric)
+plt.bar(df.ParentLocation,df.FactValueNumeric)
 plt.legend()
 plt.title('Estimated number of malaria cases')
 # saving the visualised data in a png format

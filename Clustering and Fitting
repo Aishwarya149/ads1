@@ -190,4 +190,20 @@ print(csv_file1_pca)
 mt.scatter(csv_file1_pca[:, 0], csv_file1_pca[:, 1])
 
 # Show the scatter plot
+
+from scipy.optimize import curve_fit
+
+# Define the function to fit (in this case a polynomial function of degree 2)
+def func(x, a, b, c):
+    return a*x**2 + b*x + c
+
+# Fit the function to the data using curve_fit
+popt, pcov = curve_fit(func, csv_file1_pca[:, 0], csv_file1_pca[:, 1])
+
+# Plot the data and the fitted curve
+mt.scatter(csv_file1_pca[:, 0], csv_file1_pca[:, 1], color='red')
+x = np.linspace(csv_file1_pca[:, 0].min(), csv_file1_pca[:, 0].max(), 100)
+y = func(x, *popt)
+mt.plot(x, y, color='blue')
+mt.show()
 mt.show()

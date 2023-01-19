@@ -171,3 +171,9 @@ mt.title('Histogram plot of dataset')
 # Visualizing the plot
 mt.show()
 
+# Import the PCA function from the sklearn.decomposition library
+from sklearn.decomposition import PCA
+
+# Create an instance of the PCA class with 2 components
+pca = PCA(n_components=2)
+

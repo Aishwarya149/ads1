@@ -1,0 +1,173 @@
+# Importing the pandas library
+import pandas as ps
+# Importing the seaborn library
+import seaborn as sn
+# Importing the numpy library
+import numpy as ny
+# Importing the matplotlib library
+import matplotlib.pyplot as mt
+# Importing warning function
+import warnings
+# Ignoring the warnings
+warnings.filterwarnings('ignore')
+# Importing the dataset as a CSV file in the python platform
+csv_file = ps.read_csv('35148402-007a-408f-8068-4605474da518_Data.csv')
+# Viewing the top 10 rows of the dataset
+csv_file.head(10)
+# Describing the dataset
+csv_file.describe()
+# Viewing the information of the dataset
+csv_file.info()
+# renaming the column names of the dataset
+csv_file = csv_file.rename(columns={'Series Name':'Series_Name', 'Series Code':'Series_Code', 'Country Name':'Country_Name',
+                                    'Country Code':'Country_Code', '1990 [YR1990]':'Year_1990', '2000 [YR2000]':'Year_2000', 
+                                    '2012 [YR2012]':'Year_2012', '2013 [YR2013]':'Year_2013', '2014 [YR2014]':'Year_2014', 
+                                    '2015 [YR2015]':'Year_2015', '2016 [YR2016]':'Year_2016', '2017 [YR2017]':'Year_2017', 
+                                    '2018 [YR2018]':'Year_2018', '2019 [YR2019]':'Year_2019', '2020 [YR2020]':'Year_2020', 
+                                    '2021 [YR2021]':'Year_2021'})
+# replacing the column name using functions
+csv_file = csv_file.rename(columns=lambda x: x.replace(' [YR','').replace(']',''))
+# Viewing the top rows of the renamed columns of the dataset
+csv_file.head(10)
+# Selecting the rows with Access to electricity (% of population) from the dataset
+csv_file = csv_file[csv_file['Series_Name'].isin(['Access to electricity (% of population)'])]
+# Viewing the dataset
+csv_file
+# viewing the dataset information
+csv_file.info()
+# converting the non numeric values to nan values
+csv_file[['Year_1990', 'Year_2000', 'Year_2012', 'Year_2013', 
+          'Year_2014', 'Year_2015', 'Year_2016', 'Year_2017', 
+          'Year_2018', 'Year_2019', 'Year_2020', 'Year_2021']] = csv_file[['Year_1990', 'Year_2000', 'Year_2012', 'Year_2013', 
+                                                                           'Year_2014', 'Year_2015', 'Year_2016', 'Year_2017', 
+                                                                           'Year_2018', 'Year_2019', 'Year_2020', 'Year_2021']].apply(ps.to_numeric, errors='coerce')
+# generating a new data frame with the columns
+csv_file1 = csv_file[['Year_1990', 'Year_2000', 'Year_2012', 'Year_2013', 
+                      'Year_2014', 'Year_2015', 'Year_2016', 'Year_2017', 
+                      'Year_2018', 'Year_2019', 'Year_2020', 'Year_2021']]
+# Viewing the new data frame
+csv_file1.head(10)
+# checking the null values from the data frame
+csv_file1.isnull()
+# filling the nan values with 0
+csv_file1 = csv_file1.fillna(0)
+# Viewing the new data frame head
+csv_file1.head()
+# calculating the null values
+null_values = csv_file1.isna().sum()
+# Printing the null values
+print(null_values)
+# Importing the K-Means Clustering function
+from sklearn.cluster import KMeans
+# Create a KMeans instance with the desired number of clusters
+kmeans = KMeans(n_clusters=3)
+# Fit the model to your data
+kmeans.fit(csv_file1)
+# Get the cluster assignments for each data point
+labels = kmeans.labels_
+# Get the coordinates of the cluster centers
+cluster_centers = kmeans.cluster_centers_
+# wcss selection
+wcss = []
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, init='k-means++', max_iter=300, n_init=10, random_state=0) # k-means clustering
+    kmeans.fit(csv_file1)
+    wcss.append(kmeans.inertia_) # append values of inertia
+mt.figure(figsize=(10, 5)) # selecting the figure size
+mt.plot(range(1, 11), wcss, 'b-o', color='magenta') # generating the plot with colors
+mt.title('K-Means Clustering Elbow Method') # selecting the Elbow method
+# X label selection
+mt.xlabel('Number of clusters')
+# Y label selection
+mt.ylabel('WCSS')
+# Visualizing the plot
+mt.show()
+# Fit KMeans to the data
+kmeans = KMeans(n_clusters=2)
+kmeans.fit(csv_file1)
+# Get the cluster labels
+labels = kmeans.labels_
+# Importing silhouette_score, davies_bouldin_score, calinski_harabasz_score library functions
+from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
+# Compute the Calinski-Harabasz index
+score = silhouette_score(csv_file1, labels)
+print("Silhouette Score: ", score)
+# Compute the Calinski-Harabasz index
+score = davies_bouldin_score(csv_file1, labels)
+print("Davies-Bouldin Index: ", score)
+# Compute the Calinski-Harabasz index
+score = calinski_harabasz_score(csv_file1, labels)
+print("Calinski-Harabasz index: ", score)
+# Choosing the figure size for the scatter plots
+fig, ax = mt.subplots(figsize=(15, 8))
+# scatter plot for the year 2016 from the data frame
+ax.scatter(csv_file1.index, csv_file1['Year_2016'], c=labels, cmap='Dark2', label='Year_2016')
+# scatter plot for the year 2017 from the data frame
+ax.scatter(csv_file1.index, csv_file1['Year_2017'], c=labels, cmap='Reds', label='Year_2017')
+# scatter plot for the year 2018 from the data frame
+ax.scatter(csv_file1.index, csv_file1['Year_2018'], c=labels, cmap='Greens', label='Year_2018')
+# scatter plot for the year 2019 from the data frame
+ax.scatter(csv_file1.index, csv_file1['Year_2019'], c=labels, cmap='Oranges', label='Year_2019')
+# scatter plot for the year 2020 from the data frame
+ax.scatter(csv_file1.index, csv_file1['Year_2020'], c=labels, cmap='GnBu', label='Year_2020')
+# Setting the legend
+mt.legend()
+# Plotting the scatterplot title
+mt.title('Access to electricity (% of population)')
+# Visualizing the scatter plot
+mt.show()
+# Selecting the years
+years = ['Year_2016', 'Year_2017', 'Year_2018', 'Year_2019', 'Year_2020']
+# Putting some values
+values = [16.641056060791,100,81.0756530761719,68.4595565795898,51.0939826965332] 
+# Set the figure size
+mt.figure(figsize=(8,6))
+# Generating a line plot with color='red'
+mt.plot(years, values, color='red')
+# Putting the X label of the graph
+mt.xlabel('Year')
+# Putting the Y label of the graph
+mt.ylabel('Value')
+# Selectibng the title of the line plot
+mt.title('Line plot of dataset')
+# visualizing the line graph
+mt.show()
+# Selecting the figure size
+mt.figure(figsize=(10,5))
+# selecting the colors for the bar graph
+colors = ['orange', 'cyan', 'magenta', 'black', 'brown']
+# Selecting the bar plot
+mt.bar(years, values, color=colors)
+# Selecting the X label of the graph
+mt.xlabel('Year')
+# Selecting the Y label of the graph
+mt.ylabel('Value')
+# Selecting the title of the bar plot visualization
+mt.title('Bar plot of dataset')
+# Visualizing the plot
+mt.show()
+# Set the figure size
+mt.figure(figsize=(8,6))
+# Generating a distribution plot with color='green'
+sn.distplot(values, color='green')
+# Adding xlabel
+mt.xlabel('Value')
+# Adding ylabel
+mt.ylabel('Frequency')
+# Adding the title
+mt.title('Distribution plot of dataset')
+# Showing the plot
+mt.show()
+# Set the figure size
+mt.figure(figsize=(8,6))
+# Generating a histogram plot with color='purple'
+mt.hist(values, color='purple', edgecolor = 'black')
+# Adding xlabel
+mt.xlabel('Value')
+# Adding ylabel
+mt.ylabel('Frequency')
+# Adding the title
+mt.title('Histogram plot of dataset')
+# Visualizing the plot
+mt.show()
+

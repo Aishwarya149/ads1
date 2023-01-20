@@ -207,3 +207,20 @@ y = func(x, *popt)
 mt.plot(x, y, color='blue')
 mt.show()
 mt.show()
+
+# Importing t library function
+from scipy.stats import t
+# significance level for the confidence interval
+alpha = 0.05
+# generating a new data frame
+df5 = len(csv_file1) - 1
+# mean value from the dataset
+mean = np.mean(csv_file1)
+# standard deviation value from the dataset
+stdev = np.std(csv_file1)
+# calculating the lower and upper limits of a confidence interval
+ci = t.interval(1 - alpha, df5, loc=mean, scale=stdev)
+# visualizing the lower limits
+print("Lower limit: ",ci[0])
+# visualizing the upper limits
+print("Upper limit: ",ci[1])
